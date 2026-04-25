@@ -4,63 +4,37 @@ import math
 import random
 
 
-def accelerometer():
 
-    IP = '127.0.0.1'
-    PORT = 5700
+IP = '127.0.0.1'
+PORT = 5700
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    counter = 0
+counter = 0
+button_1 = random.randint(0,1)
 
-    while True:
-        #send simulated accelerometer data in json format
-        
-        #FIXME for some reason if I send anything other than a number as value for accelerometer, nothing is received
-        #accelerometer = {"x":math.sin(counter), "y":math.sin(counter/2), "z":math.sin(counter*2) }
-        #message = '{"accelerometer" : ' + str(accelerometer) + '}'
-        
-        x = '{"accelerometer_x" : ' + str(math.sin(counter)) + '}'
-        y = '{"accelerometer_y" : ' + str(math.sin(counter/2)) + '}'
-        z = '{"accelerometer_z" : ' + str(math.sin(counter*2)) + '}'
+#probability that the button stays pressed/released in a time interval
+#because it is unrealistic that it is pressed/released every 0.1s
+p_stay = 0.9 
 
-        #send simulated button data in json format (1 for button pressed, 0 for button not pressed)
-        button_1 = '{"button_1" : ' + str(random.randint(0,1)) + '}'
+#send simulated button and accelerometer data in json format
+while True:
+    #simulate phone lying on the table
+    #from testing: approx. x, y, z = (0.005, 0.01), (0.015,0.02), (1.0015, 1.0035)
+    #factor 42 added to see changes happening in the 0.1s Intervals
+    x = 0.0025 * math.sin(counter * 42) + 0.0075
+    y = 0.0025 * math.sin(counter * 42) + 0.0175
+    z = 0.001 * math.sin(counter * 42) + 1.0025
 
-        sock.sendto(x.encode(), (IP, PORT))
-        sock.sendto(y.encode(), (IP, PORT))
-        sock.sendto(z.encode(), (IP, PORT))
-        sock.sendto(button_1.encode(), (IP, PORT))
+    if random.random() > p_stay:
+        button_1 = 1 - button_1 #0->1 or 1 -> 0
 
-        #sanity check
-        print(f"x: {x}, y: {y}, z: {z}, button 1: {button_1}")
+    message = '{"button_1": ' + str(button_1) + ', "accelerometer" : {"x": ' + str(x) +  ', "y": ' + str(y) + ', "z": ' + str(z) + '}}'
 
-        counter += 1
-        time.sleep(1)
+    sock.sendto(message.encode(), (IP, PORT))
 
+    #sanity check
+    print(message)
 
-
-# def accelerometer():
-#     IP = '127.0.0.1'
-#     PORT = 5700
-
-#     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#     counter = 0
-#     while True:
-#         accelerometer = {"x":math.sin(counter), "y":math.sin(counter/2), "z":math.sin(counter*2) }
-#         message = '{"accelerometer" : ' + str(accelerometer) + '}'
-#         #FIXME
-#         message = '{"accelerometer" : ' + str("test") + '}'
-#         print(message)#FIXME
-
-#         sock.sendto(message.encode(), (IP, PORT))
-#         counter += 1
-#         time.sleep(0.1)
-#         #FIXME
-#         if counter == 10:
-#             break
-
-accelerometer()
-
-
-
+    counter += 1
+    time.sleep(0.1)

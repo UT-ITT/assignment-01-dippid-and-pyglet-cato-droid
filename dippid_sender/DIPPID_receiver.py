@@ -1,27 +1,21 @@
 from DIPPID import SensorUDP
 
-#FIXME check code/values with demo_device/demo_polling
-
 # use UPD (via WiFi) for communication
 PORT = 5700
 sensor = SensorUDP(PORT)
 
-def handle_accelerometer_x(data):
-    print(f"accelerometer x value: {data}")
+def handle_accelerometer(data):
+    print(f"accelerometer data: {data}")
 
-def handle_accelerometer_y(data):
-    print(f"accelerometer y value: {data}")
-
-def handle_accelerometer_z(data):
-    print(f"accelerometer z value: {data}")
-
+#note: this will not print something as often as the accelerometer,
+#because callback functions are only called when the value changes
+#so we get notified when the button is newly pressed/released,
+#but not when it is continously pressed/not pressed
 def handle_button_1(data):
     if data == 1:
         print("button 1 pressed")
     else:
-        print("button 1 not pressed")
+        print("button 1 released")
 
-sensor.register_callback('accelerometer_x', handle_accelerometer_x)
-sensor.register_callback('accelerometer_y', handle_accelerometer_y)
-sensor.register_callback('accelerometer_z', handle_accelerometer_z)
+sensor.register_callback('accelerometer', handle_accelerometer)
 sensor.register_callback('button_1', handle_button_1)
