@@ -22,7 +22,7 @@ https://www.asciiart.eu/art/b12656730a00300c
 ##########################################################################################
 How to play:
 1. Start the DIPPID app on your phone, set it to your_ip:5700 and start sending data
-2. Hold your phone horizontal with the short side pointing to the front.
+2. Hold your phone horizontal with the short side containing the camera pointing to the front.
 3. Start this script
 4. Tilt your phone to the front/back or to the sides to change the direction of the snake.
 5. Have fun!
@@ -202,6 +202,3 @@ def on_draw():
 
 pyglet.app.run()
 
-#TODO:
-#add play again button
-#?fix weird warning bc of ascii art?
